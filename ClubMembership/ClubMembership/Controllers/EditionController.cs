@@ -11,134 +11,108 @@ using ClubMembership.Models;
 
 namespace ClubMembership.Controllers
 {
-    public class MemberController : Controller
+    public class EditionController : Controller
     {
         private MembershipContext db = new MembershipContext();
 
-        // GET: Member
+        // GET: Edition
         public ActionResult Index()
         {
-            List<Member> members = db.Members.ToList();
-            foreach (var member in members)
-            {
-                foreach (var campaign in member.Campaigns)
-                {
-                    member.Points += campaign.Level;
-                }
-            }
-            return View(members);
+            return View(db.Editions.ToList());
         }
 
-        // GET: Member/Details/5
+        // GET: Edition/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Members.Find(id);
-            foreach(var campaign in member.Campaigns)
-            {
-                member.Points += campaign.Level;
-            }
-            if (member == null)
+            Edition edition = db.Editions.Find(id);
+            if (edition == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(edition);
         }
 
-        // GET: Member/Create
+        // GET: Edition/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Member/Create
+        // POST: Edition/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,LastName,FirstName,Points,MembershipDate,MemberType")] Member member)
+        public ActionResult Create([Bind(Include = "EditionId,Title,Description")] Edition edition)
         {
             if (ModelState.IsValid)
             {
-                db.Members.Add(member);
+                db.Editions.Add(edition);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(member);
+            return View(edition);
         }
 
-        // GET: Member/Edit/5
+        // GET: Edition/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Members.Find(id);
-            foreach (var campaign in member.Campaigns)
-            {
-                member.Points += campaign.Level;
-            }
-            if (member == null)
+            Edition edition = db.Editions.Find(id);
+            if (edition == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(edition);
         }
 
-        // POST: Member/Edit/5
+        // POST: Edition/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,LastName,FirstName,Points,MembershipDate,MemberType")] Member member)
+        public ActionResult Edit([Bind(Include = "EditionId,Title,Description")] Edition edition)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(member).State = EntityState.Modified;
+                db.Entry(edition).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(member);
+            return View(edition);
         }
 
-        // GET: Member/Delete/5
-        public ActionResult Delete(int? id, bool? saveChangesError=false)
+        // GET: Edition/Delete/5
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (saveChangesError.GetValueOrDefault())
-            {
-                ViewBag.ErrorMessage = "Delete failed.";
-            }
-            Member member = db.Members.Find(id);
-            if (member == null)
+            Edition edition = db.Editions.Find(id);
+            if (edition == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(edition);
         }
 
-        [HttpPost]
+        // POST: Edition/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                Member member = db.Members.Find(id);
-                db.Members.Remove(member);
-                db.SaveChanges();
-            }
-            catch (DataException)
-            {
-                return RedirectToAction("Delete", new { id = id, saveChangesError = true });
-            }
+            Edition edition = db.Editions.Find(id);
+            db.Editions.Remove(edition);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 

@@ -12,8 +12,9 @@ namespace ClubMembership.Models
         public int EditionId { get; set; }
         public int MemberId { get; set; }
         public int Level { get; set; }
+        public string LevelRange { get; set; }
 
         public virtual Edition Edition { get; set; }
-        public virtual Member Member { get; set; }
+        public virtual ICollection<Member> Members { get; set; }
     }
 }

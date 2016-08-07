@@ -11,134 +11,113 @@ using ClubMembership.Models;
 
 namespace ClubMembership.Controllers
 {
-    public class MemberController : Controller
+    public class CampaignController : Controller
     {
         private MembershipContext db = new MembershipContext();
 
-        // GET: Member
+        // GET: Campaign
         public ActionResult Index()
         {
-            List<Member> members = db.Members.ToList();
-            foreach (var member in members)
-            {
-                foreach (var campaign in member.Campaigns)
-                {
-                    member.Points += campaign.Level;
-                }
-            }
-            return View(members);
+            var campaigns = db.Campaigns.Include(c => c.Edition);
+            return View(campaigns.ToList());
         }
 
-        // GET: Member/Details/5
+        // GET: Campaign/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Members.Find(id);
-            foreach(var campaign in member.Campaigns)
-            {
-                member.Points += campaign.Level;
-            }
-            if (member == null)
+            Campaign campaign = db.Campaigns.Find(id);
+            if (campaign == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(campaign);
         }
 
-        // GET: Member/Create
+        // GET: Campaign/Create
         public ActionResult Create()
         {
+            ViewBag.EditionId = new SelectList(db.Editions, "EditionId", "Title");
             return View();
         }
 
-        // POST: Member/Create
+        // POST: Campaign/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,LastName,FirstName,Points,MembershipDate,MemberType")] Member member)
+        public ActionResult Create([Bind(Include = "CampaignId,Title,EditionId,MemberId,Level,LevelRange")] Campaign campaign)
         {
             if (ModelState.IsValid)
             {
-                db.Members.Add(member);
+                db.Campaigns.Add(campaign);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(member);
+            ViewBag.EditionId = new SelectList(db.Editions, "EditionId", "Title", campaign.EditionId);
+            return View(campaign);
         }
 
-        // GET: Member/Edit/5
+        // GET: Campaign/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Members.Find(id);
-            foreach (var campaign in member.Campaigns)
-            {
-                member.Points += campaign.Level;
-            }
-            if (member == null)
+            Campaign campaign = db.Campaigns.Find(id);
+            if (campaign == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            ViewBag.EditionId = new SelectList(db.Editions, "EditionId", "Title", campaign.EditionId);
+            return View(campaign);
         }
 
-        // POST: Member/Edit/5
+        // POST: Campaign/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,LastName,FirstName,Points,MembershipDate,MemberType")] Member member)
+        public ActionResult Edit([Bind(Include = "CampaignId,Title,EditionId,MemberId,Level,LevelRange")] Campaign campaign)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(member).State = EntityState.Modified;
+                db.Entry(campaign).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(member);
+            ViewBag.EditionId = new SelectList(db.Editions, "EditionId", "Title", campaign.EditionId);
+            return View(campaign);
         }
 
-        // GET: Member/Delete/5
-        public ActionResult Delete(int? id, bool? saveChangesError=false)
+        // GET: Campaign/Delete/5
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (saveChangesError.GetValueOrDefault())
-            {
-                ViewBag.ErrorMessage = "Delete failed.";
-            }
-            Member member = db.Members.Find(id);
-            if (member == null)
+            Campaign campaign = db.Campaigns.Find(id);
+            if (campaign == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            return View(campaign);
         }
 
-        [HttpPost]
+        // POST: Campaign/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public ActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                Member member = db.Members.Find(id);
-                db.Members.Remove(member);
-                db.SaveChanges();
-            }
-            catch (DataException)
-            {
-                return RedirectToAction("Delete", new { id = id, saveChangesError = true });
-            }
+            Campaign campaign = db.Campaigns.Find(id);
+            db.Campaigns.Remove(campaign);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 

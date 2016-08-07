@@ -41,16 +41,16 @@ namespace ClubMembership.DAL
                 context.SaveChanges();
             var Campaigns = new List<Campaign>
                 {
-                new Campaign{Title="Out of the Abyss",MemberId=1,EditionId=4,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=1,EditionId=5,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=2,EditionId=3,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=2,EditionId=1,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=3,EditionId=4,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=4,EditionId=5,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=4,EditionId=5,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=5,EditionId=2,Level=1},
+                new Campaign{Title="Out of the Abyss", MemberId=1,EditionId=4,Level=1},
+                new Campaign{Title="Campaign 2",MemberId=1,EditionId=5,Level=2},
+                new Campaign{Title="Out of the Abyss",MemberId=2,EditionId=3,Level=10},
+                new Campaign{Title="IDK",MemberId=2,EditionId=1,Level=1},
+                new Campaign{Title="Stradh",MemberId=3,EditionId=4,Level=1},
+                new Campaign{Title="Out of the Abyss",MemberId=4,EditionId=5,Level=11},
+                new Campaign{Title="LMOP",MemberId=4,EditionId=5,Level=1},
+                new Campaign{Title="Out of the Abyss",MemberId=5,EditionId=2,Level=5},
                 new Campaign{Title="Out of the Abyss",MemberId=6,EditionId=5,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=6,EditionId=3,Level=1},
+                new Campaign{Title="LMOP",MemberId=6,EditionId=3,Level=1},
                 };
                 Campaigns.ForEach(s => context.Campaigns.Add(s));
                 context.SaveChanges();
