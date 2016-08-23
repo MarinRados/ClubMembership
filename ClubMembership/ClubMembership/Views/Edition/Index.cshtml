@@ -25,12 +25,12 @@
         <td>
             @Html.DisplayFor(modelItem => item.Title)
         </td>
-        <td>
+        <td width="600px">
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
+            @Html.ActionLink("Campaigns", "Details", new { id = item.EditionId }) |
             @Html.ActionLink("Edit", "Edit", new { id=item.EditionId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.EditionId }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.EditionId })
         </td>
     </tr>

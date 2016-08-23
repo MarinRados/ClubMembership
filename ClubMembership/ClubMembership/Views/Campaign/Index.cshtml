@@ -12,19 +12,13 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Edition.Title)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.MemberId)
+            @Html.DisplayNameFor(model => model.Edition)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Level)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LevelRange)
         </th>
         <th></th>
     </tr>
@@ -32,24 +26,18 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Edition.Title)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.Title)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.MemberId)
+            @Html.DisplayFor(modelItem => item.Edition.Title)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Level)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.LevelRange)
-        </td>
-        <td>
+            @Html.ActionLink("Members", "Details", new { id = item.CampaignId }) |
             @Html.ActionLink("Edit", "Edit", new { id=item.CampaignId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CampaignId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CampaignId })
+            @Html.ActionLink("Delete", "Delete", new { id = item.CampaignId })
         </td>
     </tr>
 }

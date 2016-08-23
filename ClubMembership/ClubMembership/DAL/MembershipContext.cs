@@ -20,6 +20,15 @@ namespace ClubMembership.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            modelBuilder.Entity<Campaign>()
+               .HasMany(m => m.Members)
+               .WithMany(c => c.Campaigns)
+               .Map(cs =>
+               {
+                   cs.MapLeftKey("CampaignId");
+                   cs.MapRightKey("MemberId");
+                   cs.ToTable("CampaignMember");
+               });
         }
     }
 }

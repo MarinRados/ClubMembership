@@ -7,7 +7,7 @@ using ClubMembership.Models;
 
 namespace ClubMembership.DAL
 {
-    public class MembershipInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<MembershipContext>
+    public class MembershipInitializer : System.Data.Entity.DropCreateDatabaseAlways<MembershipContext> //TODO: change to model drop
     {
         protected override void Seed(MembershipContext context)
         {
@@ -35,25 +35,34 @@ namespace ClubMembership.DAL
                 new Edition{EditionId=3,Title="3rd Edition",Description=""},
                 new Edition{EditionId=4,Title="3.5 Edition",Description=""},
                 new Edition{EditionId=5,Title="4th Edition",Description=""},
-                new Edition{EditionId=6,Title="5th Edition",Description=""},
+                new Edition{EditionId=6,Title="5th Edition",Description=""}
                 };
                 Editions.ForEach(s => context.Editions.Add(s));
                 context.SaveChanges();
             var Campaigns = new List<Campaign>
                 {
-                new Campaign{Title="Out of the Abyss", MemberId=1,EditionId=4,Level=1},
-                new Campaign{Title="Campaign 2",MemberId=1,EditionId=5,Level=2},
-                new Campaign{Title="Out of the Abyss",MemberId=2,EditionId=3,Level=10},
-                new Campaign{Title="IDK",MemberId=2,EditionId=1,Level=1},
-                new Campaign{Title="Stradh",MemberId=3,EditionId=4,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=4,EditionId=5,Level=11},
-                new Campaign{Title="LMOP",MemberId=4,EditionId=5,Level=1},
-                new Campaign{Title="Out of the Abyss",MemberId=5,EditionId=2,Level=5},
-                new Campaign{Title="Out of the Abyss",MemberId=6,EditionId=5,Level=1},
-                new Campaign{Title="LMOP",MemberId=6,EditionId=3,Level=1},
+                new Campaign{Title="Curse Of Stradh",EditionId=5,Level=2, Members = new List<Member>()},
+                new Campaign{Title="Out of the Abyss",EditionId=5,Level=17, Members = new List<Member>()},
+                new Campaign{Title="Lost Mine of Phandelver",EditionId=5,Level=1, Members = new List<Member>()}
                 };
                 Campaigns.ForEach(s => context.Campaigns.Add(s));
                 context.SaveChanges();
+
+                AddOrUpdateMember(context, "Curse Of Stradh", "Radoš");
+                AddOrUpdateMember(context, "Curse Of Stradh", "Tilhof");
+                AddOrUpdateMember(context, "Curse Of Stradh", "Milošević");
+                AddOrUpdateMember(context, "Out of the Abyss", "Kopić");
+                AddOrUpdateMember(context, "Out of the Abyss", "Milošević");
+        }
+
+        void AddOrUpdateMember(MembershipContext context, string campaignTitle, string memberName)
+        {
+            var cpm = context.Campaigns.SingleOrDefault(c => c.Title == campaignTitle);
+            var mbm = cpm.Members.SingleOrDefault(m => m.LastName == memberName);
+            if(mbm == null)
+            {
+                cpm.Members.Add(context.Members.Single(m => m.LastName == memberName));
+            }
         }
     }
 }

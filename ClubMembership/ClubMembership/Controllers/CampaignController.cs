@@ -49,7 +49,7 @@ namespace ClubMembership.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CampaignId,Title,EditionId,MemberId,Level,LevelRange")] Campaign campaign)
+        public ActionResult Create([Bind(Include = "CampaignId,Title,EditionId,Level")] Campaign campaign)
         {
             if (ModelState.IsValid)
             {
@@ -83,7 +83,7 @@ namespace ClubMembership.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CampaignId,Title,EditionId,MemberId,Level,LevelRange")] Campaign campaign)
+        public ActionResult Edit([Bind(Include = "CampaignId,Title,EditionId,Level")] Campaign campaign)
         {
             if (ModelState.IsValid)
             {

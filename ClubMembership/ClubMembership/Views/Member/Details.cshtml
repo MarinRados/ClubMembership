@@ -4,51 +4,11 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
-
 <div>
-    <h4>Member</h4>
+    <h2>@Html.DisplayFor(model => model.FullName)</h2>
+    <h4>Campaigns</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Points)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Points)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MembershipDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MembershipDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MemberType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MemberType)
-        </dd>
         <dd>
             <table class="table">
                 <tr>
