@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using PagedList;
 using ClubMembership.DAL;
 using ClubMembership.Models;
 
@@ -16,10 +17,39 @@ namespace ClubMembership.Controllers
         private MembershipContext db = new MembershipContext();
 
         // GET: Campaign
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page)
         {
-            var campaigns = db.Campaigns.Include(c => c.Edition);
-            return View(campaigns.ToList());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.TitleSortParm = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var campaigns = from s in db.Campaigns select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                campaigns = campaigns.Where(s => s.Title.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    campaigns = campaigns.OrderByDescending(s => s.Title);
+                    break;
+                default:
+                    campaigns = campaigns.OrderBy(s => s.Title);
+                    break;
+            }
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(campaigns.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Campaign/Details/5

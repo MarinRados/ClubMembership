@@ -41,7 +41,7 @@ namespace ClubMembership.DAL
                 context.SaveChanges();
             var Campaigns = new List<Campaign>
                 {
-                new Campaign{Title="Curse Of Stradh",EditionId=5,Level=2, Members = new List<Member>()},
+                new Campaign{Title="Curse Of Stradh",EditionId=5,Level=12, Members = new List<Member>()},
                 new Campaign{Title="Out of the Abyss",EditionId=5,Level=17, Members = new List<Member>()},
                 new Campaign{Title="Lost Mine of Phandelver",EditionId=5,Level=1, Members = new List<Member>()}
                 };

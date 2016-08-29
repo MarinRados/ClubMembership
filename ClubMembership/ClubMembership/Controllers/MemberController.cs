@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using ClubMembership.DAL;
 using ClubMembership.Models;
+using PagedList;
 
 namespace ClubMembership.Controllers
 {
@@ -16,17 +17,84 @@ namespace ClubMembership.Controllers
         private MembershipContext db = new MembershipContext();
 
         // GET: Member
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page, string type, bool topCondition = false)
         {
-            List<Member> members = db.Members.ToList();
-            foreach (var member in members)
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            if (topCondition == true)
             {
-                foreach (var campaign in member.Campaigns)
+                var topMembers = db.Members.ToList();
+                foreach (var member in topMembers)
                 {
-                    member.Points += campaign.Level;
+                    foreach (var campaign in member.Campaigns)
+                    {
+                        member.Points += campaign.Level;
+                    }
                 }
+                if(type == "DM")
+                {
+                    var topFiveDM = (from m in topMembers where m.MemberType == MemberType.DM select m).OrderByDescending(m => m.Points).Take(5);
+                    return View(topFiveDM.ToPagedList(pageNumber, pageSize));
+                }
+                else if (type == "PC")
+                {
+                    var topFivePC = (from m in topMembers where m.MemberType == MemberType.PC select m).OrderByDescending(m => m.Points).Take(5);
+                    return View(topFivePC.ToPagedList(pageNumber, pageSize));
+                }
+                else
+                {
+                    var topFive = (from m in topMembers select m).OrderByDescending(m => m.Points).Take(5);
+                    return View(topFive.ToPagedList(pageNumber, pageSize));
+                }   
             }
-            return View(members);
+            else 
+            {
+                if (searchString != null)
+                {
+                    page = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewBag.CurrentFilter = searchString;
+
+                var members = from m in db.Members select m;
+                foreach (var member in members.ToList())
+                {
+                    foreach (var campaign in member.Campaigns)
+                    {
+                        member.Points += campaign.Level;
+                    }
+                }
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    members = members.Where(m => m.LastName.Contains(searchString)
+                                           || m.FirstName.Contains(searchString));
+                }
+                switch (sortOrder)
+                {
+                    case "name_desc":
+                        members = members.OrderByDescending(m => m.LastName);
+                        break;
+                    case "Date":
+                        members = members.OrderBy(m => m.MembershipDate);
+                        break;
+                    case "date_desc":
+                        members = members.OrderByDescending(m => m.MembershipDate);
+                        break;
+                    default:
+                        members = members.OrderBy(m => m.LastName);
+                        break;
+                }
+                    return View(members.ToPagedList(pageNumber, pageSize));
+             }      
         }
 
         // GET: Member/Details/5
