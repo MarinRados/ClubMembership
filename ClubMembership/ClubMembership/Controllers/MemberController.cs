@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using ClubMembership.DAL;
 using ClubMembership.Models;
 using PagedList;
+using System.Data.Entity.Infrastructure;
 
 namespace ClubMembership.Controllers
 {
@@ -119,23 +120,34 @@ namespace ClubMembership.Controllers
         // GET: Member/Create
         public ActionResult Create()
         {
+            var member = new Member();
+            member.Campaigns = new List<Campaign>();
+            PopulateAddedCampaigns(member);
             return View();
         }
 
-        // POST: Member/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,LastName,FirstName,Points,MembershipDate,MemberType")] Member member)
+        public ActionResult Create([Bind(Include = "Id,LastName,FirstName,MembershipDate,MemberType")] Member member, string[] selectedCampaigns)
         {
-            if (ModelState.IsValid)
+            if(selectedCampaigns != null)
+            {
+                member.Campaigns = new List<Campaign>();
+                foreach( var campaign in selectedCampaigns)
+                {
+                    var campaignToAdd = db.Campaigns.Find(int.Parse(campaign));
+                    member.Campaigns.Add(campaignToAdd);
+                }
+            }
+
+            if(ModelState.IsValid)
             {
                 db.Members.Add(member);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
+            PopulateAddedCampaigns(member);
             return View(member);
         }
 
@@ -146,11 +158,8 @@ namespace ClubMembership.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Members.Find(id);
-            foreach (var campaign in member.Campaigns)
-            {
-                member.Points += campaign.Level;
-            }
+            Member member = db.Members.Include(i => i.Campaigns).Where(i => i.Id == id).Single();
+            PopulateAddedCampaigns(member);
             if (member == null)
             {
                 return HttpNotFound();
@@ -158,20 +167,33 @@ namespace ClubMembership.Controllers
             return View(member);
         }
 
-        // POST: Member/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,LastName,FirstName,Points,MembershipDate,MemberType")] Member member)
+        public ActionResult Edit(int? id, string[] selectedCampaigns)
         {
-            if (ModelState.IsValid)
+            if( id == null)
             {
-                db.Entry(member).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            return View(member);
+
+            var memberToUpdate = db.Members.Include(i => i.Campaigns).Where(i => i.Id == id).Single();
+
+            if(TryUpdateModel(memberToUpdate, "", new string[] {"LastName","FirstName","MembershipDate","MemberType"}))
+            {
+                try
+                {
+                    UpdateMemberCampaigns(selectedCampaigns, memberToUpdate);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch(RetryLimitExceededException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes");
+                }
+            }
+            PopulateAddedCampaigns(memberToUpdate);
+            return View(memberToUpdate);
         }
 
         // GET: Member/Delete/5
@@ -217,6 +239,55 @@ namespace ClubMembership.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private void PopulateAddedCampaigns(Member member)
+        {
+            var allCampaigns = db.Campaigns;
+            var memberCampaigns = new HashSet<int>(member.Campaigns.Select(c => c.CampaignId));
+            var viewModel = new List<AddedCampaigns>();
+
+            foreach(var campaign in allCampaigns)
+            {
+                viewModel.Add(new AddedCampaigns
+                {
+                    CampaignId = campaign.CampaignId,
+                    Title = campaign.Title,
+                    Added = memberCampaigns.Contains(campaign.CampaignId)
+                });
+            }
+
+            ViewBag.Campaigns = viewModel;
+        }
+
+        private void UpdateMemberCampaigns(string[] selectedCampaigns, Member memberToUpdate)
+        {
+            if(selectedCampaigns == null)
+            {
+                memberToUpdate.Campaigns = new List<Campaign>();
+                return;
+            }
+
+            var selectedCampaignsHS = new HashSet<string>(selectedCampaigns);
+            var memberCampaigns = new HashSet<int>(memberToUpdate.Campaigns.Select(c => c.CampaignId));
+
+            foreach( var campaign in db.Campaigns)
+            {
+                if(selectedCampaignsHS.Contains(campaign.CampaignId.ToString()))
+                {
+                    if(!memberCampaigns.Contains(campaign.CampaignId))
+                    {
+                        memberToUpdate.Campaigns.Add(campaign);
+                    }
+                }
+                else
+                {
+                    if(memberCampaigns.Contains(campaign.CampaignId))
+                    {
+                        memberToUpdate.Campaigns.Remove(campaign);
+                    }
+                }
+            }
         }
     }
 }

@@ -51,6 +51,35 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
+                <table>
+                    <tr>Campaigns</tr>
+                    <tr>
+                        @{
+                            int cnt = 0;
+                            List<ClubMembership.Models.AddedCampaigns> campaigns = ViewBag.Campaigns;
+
+                            foreach (var campaign in campaigns)
+                            {
+                                if (cnt++ % 2 == 0)
+                                {
+                                    @:</tr><tr>
+                                }
+                                @:<td>
+                                <input type="checkbox"
+                               name="selectedCampaigns"
+                               value="@campaign.CampaignId"
+                               @(Html.Raw(campaign.Added ? "checked=\"checked\"" : "")) />
+                                    @campaign.Title @:
+                                    @:</td>
+                                }
+                                @:</tr>
+                        }
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
