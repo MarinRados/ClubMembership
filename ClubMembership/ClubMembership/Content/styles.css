@@ -1,0 +1,22 @@
+﻿.buttonStyle {
+	background: rgb(0, 128, 128);
+    border: 0;
+    padding: 5px 10px;
+    color: white;
+    letter-spacing: 1.3px;
+	cursor: pointer;
+	transition: all .35s ease-in-out;
+}
+
+.buttonStyle:hover,
+.buttonStyle:active,
+.buttonStyle:focus {
+	outline: 0;
+    background-color: rgb(11, 80, 80);
+}
+
+.buttonStyleRight:hover,
+.buttonStyleRight:focus {
+	outline: 0;
+    background-color: rgb(11, 80, 80);
+}

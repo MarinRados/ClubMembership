@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Club Membership</title>
+    <link href="@Url.Content("~/Content/styles.css")" rel="stylesheet" type="text/css" />
+    @RenderSection("Content", false)
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -20,7 +22,6 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("Members", "Index", "Member")</li>
                     <li>@Html.ActionLink("Campaigns", "Index", "Campaign")</li>
                     <li>@Html.ActionLink("Editions", "Index", "Edition")</li>
