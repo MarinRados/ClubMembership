@@ -8,6 +8,7 @@ namespace ClubMembership.Models
 {
     public class UserAccount
     {
+        [Key]
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Username is required.")]

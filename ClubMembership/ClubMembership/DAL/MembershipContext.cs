@@ -17,6 +17,7 @@ namespace ClubMembership.DAL
         public DbSet<Member> Members { get; set; }
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<Edition> Editions { get; set; }
+        public DbSet<UserAccount> UserAccounts { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
