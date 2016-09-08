@@ -25,6 +25,7 @@ namespace ClubMembership.Models
         public int Points { get; set; }
 
         [Display(Name = "Membership Date")]
+        [DisplayFormat(DataFormatString = "{0: dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime MembershipDate { get; set; }
 
         [Display(Name = "Member type")]
